@@ -19,8 +19,7 @@ const RegisterUser = asyncHandler(async (req, res) => {
 
         if (existingUser || existingPhone || existingPassword) {
             throw new Error("User already exists");
-        }   
-
+        }
     
         const user = await User.create({
             FirstName,
@@ -45,7 +44,8 @@ const RegisterUser = asyncHandler(async (req, res) => {
         res.cookie("jwt", refreshToken, {
             httpOnly: true,
             secure: true,
-            sameSite: "none",
+            expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
+            sameSite: "strict",
         });
 
         res
@@ -112,5 +112,17 @@ const LogoutUser = asyncHandler(async (req, res) => {
     .status(200)
     .json( new ApiResponse(200, {}, "User logged out successfully"));
 });
+
+        // Update user
+// const UpdateUser = asyncHandler(async (req, res) => {
+
+//     const { id } = req.params;
+
+//     try {
+        
+//     } catch (error) {
+        
+//     }
+// })
 
 export { RegisterUser, LoginUser, LogoutUser };
