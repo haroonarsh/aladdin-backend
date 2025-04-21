@@ -30,7 +30,7 @@ const userSchema = mongoose.Schema({
     },
     Date: {
         type: String,
-        default: new Date().toLocaleDateString("en-PK", {
+        default: new Date().toLocaleDateString("en-US", {
             year: "numeric",
             month: "2-digit",
             day: "2-digit",
@@ -38,8 +38,13 @@ const userSchema = mongoose.Schema({
     },  
     Gender: {
         type: String,
-        default: "Male"
+        default: "Male",
+        enum: ["Male", "Female"]
     },
+    CountryCode: {
+        type: String,
+        default: "pk"
+    }
 },
     {
         timestamps: true
