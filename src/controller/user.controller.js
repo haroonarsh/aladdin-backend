@@ -122,19 +122,31 @@ const UpdateUser = asyncHandler(async (req, res) => {
             throw new Error("All fields are required");
         }
 
+        const existingUser = await User.findOne({ Email, _id: { $ne: req.user._id } });
+        const existingPhone = await User.findOne({ PhoneNo, _id: { $ne: req.user._id } });
+
+        if (existingUser) {
+            throw new Error("Email already exists");
+        }
+        if (existingPhone) {
+            throw new Error("Phone number already exists");
+        }
+
         const user = await User.findByIdAndUpdate(
             req.user._id,
             {
-                FirstName,
+                $set: {
+                    FirstName,
                 LastName,
                 Email,
                 PhoneNo,
                 Gender,
                 Date,
                 CountryCode
+                }
             },
-            { new: true }
-        );
+            { new: true, runValidators: true }
+        ).select("-password -refreshToken");
         if (!user) {
             throw new Error("User not found");
         }
