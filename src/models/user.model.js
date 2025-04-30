@@ -2,6 +2,11 @@ import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 
 const userSchema = mongoose.Schema({
+    GoogleId: {
+        type: String,
+        unique: true,
+        sparse: true
+    },
     FirstName: {
         type: String,
         required: true
@@ -21,7 +26,7 @@ const userSchema = mongoose.Schema({
     },
     PhoneNo: {
         type: String,
-        required: true,
+        required: false,
         unique: true
     },
     Password: {
