@@ -1,4 +1,4 @@
-import { GetUser, LoginUser, LogoutUser, RegisterUser, UpdateUser } from "../controller/user.controller.js";
+import { GetUser, LoginUser, LogoutUser, RegisterUser, UpdateImage, UpdateUser } from "../controller/user.controller.js";
 import express from "express";
 import authMiddleware from "../middlewares/auth.middleware.js";
 
@@ -10,5 +10,6 @@ route.post("/logout", LogoutUser);
 // route.get("/check", authMiddleware, CheckUser);
 route.get("/getUser", authMiddleware, GetUser); // Protect this route with the middleware
 route.put("/updateUser", authMiddleware, UpdateUser);
+route.put("/updateImage", authMiddleware, UpdateImage); // Protect this route with the middleware
 
 export default route;
