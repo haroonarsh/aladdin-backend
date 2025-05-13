@@ -19,9 +19,7 @@ route.get(
             httpOnly: true,
             secure: true,
             sameSite: "none",
-        })
-        // Set the user information in the session
-        // res.json(req.user);
+        });
         // Redirect to frontend after successful auth
         res.redirect("http://localhost:3000/products-page"); // Adjust to your frontend URL
     }

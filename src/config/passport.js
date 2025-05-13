@@ -38,7 +38,6 @@ passport.use(
                 }
 
                 // Generate a JWT token for the user
-                // const { accessToken, refreshToken } = generateToken(user._id);
                 const { accessToken: jwtAccessToken, refreshToken: jwtRefreshToken } = generateToken(user._id);
 
                 // Return the user object
