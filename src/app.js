@@ -43,13 +43,16 @@ app.use(passport.session());
 import connectDB from './config/db.js';
 connectDB();
 
+// Products routes
+import productRouter from "./routes/product.routes.js"
+app.use('/api/products', productRouter);
+
 // google routes
 import googleRouter from './routes/auth.routes.js';
 app.use('/auth', googleRouter);
 
 // Routes
 import userRouter from './routes/user.routes.js';
-// import passport from 'passport';
 app.use('/api/user', userRouter);
 
 // Start server
