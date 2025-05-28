@@ -1,12 +1,16 @@
 import express from "express";
 import { GetProducts, AddProduct, UpdateProduct, DeleteProduct } from "../controller/product.controller.js";
+import upload from "../middlewares/upload.middleware.js";
+import authMiddleware from "../middlewares/auth.middleware.js";
+import admin from "../middlewares/admin.middleware.js";
 
 const route = express.Router();
 
 route.get("/", GetProducts);
-route.post("/", AddProduct);
+route.post("/", authMiddleware, admin, upload.single("ProductImage"), AddProduct);
 
-route.put("/:id", UpdateProduct);
-route.delete("/:id", DeleteProduct);
+route.get("/:id", GetProducts);
+route.put("/:id", authMiddleware, admin, upload.single("ProductImage"), UpdateProduct);
+route.delete("/:id", authMiddleware, admin, DeleteProduct);
 
 export default route;
