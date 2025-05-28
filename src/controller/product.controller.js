@@ -27,7 +27,7 @@ const GetProducts = asyncHandler(async (req, res) => {
 
     // Add product
 const AddProduct = asyncHandler(async (req, res) => {
-    const { name, description, price, stock, category } = req.body;
+    const { name, description, price, stock, category, brand, SKU, status, weight, dimensions, tags } = req.body;
     try {
         let imageUrl = "";
         if (req.file) {
@@ -44,6 +44,12 @@ const AddProduct = asyncHandler(async (req, res) => {
             stock,
             category,
             imageUrl,
+            brand,
+            SKU,
+            status,
+            weight,
+            dimensions,
+            tags
         });
 
         await product.save();
