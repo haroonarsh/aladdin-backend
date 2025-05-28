@@ -24,6 +24,11 @@ const userSchema = mongoose.Schema({
         type: String,
         default: "https://cdn-icons-png.freepik.com/512/5045/5045878.png"
     },
+    Role: {
+        type: String,
+        default: "user",
+        enum: ["user", "admin"]
+    },
     PhoneNo: {
         type: String,
         required: false,
