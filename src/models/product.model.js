@@ -25,7 +25,32 @@ const productSchema = new mongoose.Schema({
     },
     imageUrl: {
         type: String,
-        required: true,
+        required: false,
+    },
+    brand: {
+        type: String,
+        required: false,
+    },
+    SKU: {
+        type: String,
+        required: false,
+    },
+    status: {
+        type: String,
+        enum: ["Active", "Inactive", "Out of Stock"],
+        default: "Active",
+    },
+    weight: {
+        type: String,
+        required: false,
+    },
+    dimensions: {
+        type: String,
+        required: false,
+    },
+    tags: {
+        type: [String],
+        required: false,
     },
     createdAt: {
         type: Date,
