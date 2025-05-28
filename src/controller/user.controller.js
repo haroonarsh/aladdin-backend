@@ -10,7 +10,7 @@ import fs from "fs/promises";
         // Register User
 const RegisterUser = asyncHandler(async (req, res) => {
     try {
-        const { FirstName, LastName, Email, PhoneNo, Password, Gender } = req.body;
+        const { FirstName, LastName, Email, PhoneNo, Password, Gender, Role } = req.body;
     
         if (!FirstName || !LastName || !Email || !PhoneNo || !Password) {
             res.status(400).json({
@@ -34,7 +34,8 @@ const RegisterUser = asyncHandler(async (req, res) => {
             Email,
             PhoneNo,
             Password,
-            Gender
+            Gender,
+            Role: Role || "user", // Default role is 'user'
         });
     
         if (!user) {
