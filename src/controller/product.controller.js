@@ -27,9 +27,9 @@ const GetProducts = asyncHandler(async (req, res) => {
 
     // Add product
 const AddProduct = asyncHandler(async (req, res) => {
-    const { name, description, price, stock, category, brand, SKU, status, weight, dimensions, tags } = req.body;
+    const { name, description, price, stock, category, brand, SKU, status, weight, dimensions, imageUrl, tags } = req.body;
     try {
-        let imageUrl = "";
+        // let imageUrl = "";
         if (req.file) {
             const result = await cloudinary.uploader.upload(req.file.path, {
                 folder: "products",
@@ -67,18 +67,33 @@ const AddProduct = asyncHandler(async (req, res) => {
     // Update product
 const UpdateProduct = asyncHandler(async (req, res) => {
     const { id } = req.params;
-    const updates = req.body;
     try {
+        const { name, description, price, stock, category, brand, SKU, status, weight, dimensions, imageUrl } = req.body;
+
         if (req.file) {
             const result = await cloudinary.uploader.upload(req.file.path, {
                 folder: "products",
             });
-            updates.imageUrl = result.secure_url;
+            imageUrl = result.secure_url;
             fs.unlinkSync(req.file.path); // Clean up the temporary file
         }
         const product = await Product.findByIdAndUpdate(
-            id,
-            updates,
+            req.params.id,
+            {
+                $set: {
+                    name,
+                    description,
+                    price,
+                    stock,
+                    category,
+                    brand,
+                    SKU,
+                    status,
+                    weight,
+                    dimensions,
+                    imageUrl
+                }
+            },
             { new: true }
         );
         if (!product) {
