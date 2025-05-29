@@ -166,12 +166,12 @@ const UpdateUser = asyncHandler(async (req, res) => {
             {
                 $set: {
                     FirstName,
-                LastName,
-                Email,
-                PhoneNo,
-                Gender,
-                Date,
-                CountryCode
+                    LastName,
+                    Email,
+                    PhoneNo,
+                    Gender,
+                    Date,
+                    CountryCode
                 }
             },
             { new: true, runValidators: true }
