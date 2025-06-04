@@ -214,6 +214,7 @@ const GetUser = asyncHandler(async (req, res) => {
     }
 })
 
+    // Update user profile image
 const UpdateImage = asyncHandler(async (req, res) => {
     try {
         const userId = req.user._id;
@@ -260,4 +261,44 @@ const UpdateImage = asyncHandler(async (req, res) => {
     }
 })
 
-export { RegisterUser, LoginUser, LogoutUser, GetUser, UpdateUser, UpdateImage };
+    // Update password
+const UpdatePassword = asyncHandler(async (req, res) => {
+    try {
+        const { currentPassword, newPassword, confirmPassword } = req.body;
+        if (!currentPassword || !newPassword || !confirmPassword) {
+            res.status(400).json({
+                message: "All fields are required",
+            });
+        }
+        if (newPassword !== confirmPassword) {
+            res.status(400).json({
+                message: "New password and confirm password do not match",
+            });
+        }
+        const user = await User.findById(req.user._id);
+        if (!user) {
+            res.status(400).json({
+                message: "User not found",
+            });
+        }
+        const isPasswordMatch = await user.comparePassword(currentPassword);
+        if (!isPasswordMatch) {
+            res.status(400).json({
+                message: "Current password is incorrect",
+            });
+        }
+        user.Password = newPassword;
+        await user.save();
+
+        res
+        .status(200)
+        .json( new ApiResponse(200, { user }, "Password updated successfully"));
+    } catch (error) {
+        console.log(error.message);
+        res.status(400).json({
+            message: error.message || "Password update failed",
+        });
+    }
+})
+
+export { RegisterUser, LoginUser, LogoutUser, GetUser, UpdateUser, UpdateImage, UpdatePassword };
