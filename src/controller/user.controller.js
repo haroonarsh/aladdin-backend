@@ -301,4 +301,64 @@ const UpdatePassword = asyncHandler(async (req, res) => {
     }
 })
 
-export { RegisterUser, LoginUser, LogoutUser, GetUser, UpdateUser, UpdateImage, UpdatePassword };
+    // Become Admin
+const BecomeAdmin = asyncHandler(async (req, res) => {
+    const userId = req.user._id;
+    try {
+        const user = await User.findByIdAndUpdate(
+            userId,
+            {
+                $set: {
+                    Role: "admin"
+                }
+            },
+            { new: true, runValidators: true }
+        ).select("-password -refreshToken");
+        if (!user) {
+            res.status(400).json({
+                message: "User not found",
+            });
+        }
+
+        res
+        .status(200)
+        .json( new ApiResponse(200, { user }, "User updated successfully"));
+    } catch (error) {
+        console.log(error.message);
+        res.status(400).json({
+            message: error.message || "User update failed",
+        });
+    }
+})
+
+    // become user
+const BecomeUser = asyncHandler(async (req, res) => {
+    const userId = req.user._id;
+    try {
+        const user = await User.findByIdAndUpdate(
+            userId,
+            {
+                $set: {
+                    Role: "user"
+                }
+            },
+            { new: true, runValidators: true }
+        ).select("-password -refreshToken");
+        if (!user) {
+            res.status(400).json({
+                message: "User not found",
+            });
+        }
+
+        res
+        .status(200)
+        .json( new ApiResponse(200, { user }, "User updated successfully"));
+    } catch (error) {
+        console.log(error.message);
+        res.status(400).json({
+            message: error.message || "User update failed",
+        });
+    }
+})
+
+export { RegisterUser, LoginUser, LogoutUser, GetUser, UpdateUser, UpdateImage, UpdatePassword, BecomeAdmin, BecomeUser };
