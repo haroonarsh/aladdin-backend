@@ -1,4 +1,4 @@
-import { GetUser, LoginUser, LogoutUser, RegisterUser, UpdateImage, UpdatePassword, UpdateUser } from "../controller/user.controller.js";
+import { BecomeAdmin, BecomeUser, GetUser, LoginUser, LogoutUser, RegisterUser, UpdateImage, UpdatePassword, UpdateUser } from "../controller/user.controller.js";
 import express from "express";
 import authMiddleware from "../middlewares/auth.middleware.js";
 import upload from "../middlewares/upload.middleware.js";
@@ -13,5 +13,7 @@ route.get("/getUser", authMiddleware, GetUser); // Protect this route with the m
 route.put("/updateUser", authMiddleware, UpdateUser);
 route.put("/updateImage", authMiddleware, upload.single("ProfileImage"), UpdateImage); // Protect this route with the middleware
 route.put("/updatePassword", authMiddleware, UpdatePassword); // Protect this route with the middleware
+route.put("/becomeSeller", authMiddleware, BecomeAdmin); // Protect this route with the middleware
+route.put("/becomeBuyer", authMiddleware, BecomeUser); // Protect this route with the middleware
 
 export default route;
