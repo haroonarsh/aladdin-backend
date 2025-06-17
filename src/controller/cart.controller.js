@@ -62,4 +62,25 @@ const GetCart = asyncHandler(async (req, res) => {
     }
 })
 
-export { AddToCart, GetCart };
+    // Delete Cart
+const DeleteCart = asyncHandler(async (req, res) => {
+    const { id } = req.params;
+    try {
+        const cart = await Cart.findByIdAndDelete(id);
+        if (!cart) {
+            return res.status(404).json({
+                message: "Cart not found",
+            });
+        }
+        res
+        .status(200)
+        .json( new ApiResponse(200, { cart }, "Cart deleted successfully"));
+    } catch (error) {
+        console.log(error.message);
+        res.status(400).json({
+            message: error.message || "Cart not deleted",
+        });
+    }
+})
+
+export { AddToCart, GetCart, DeleteCart };
