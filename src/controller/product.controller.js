@@ -25,6 +25,28 @@ const GetProducts = asyncHandler(async (req, res) => {
     }
 });
 
+    // Get single product
+const GetProduct = asyncHandler(async (req, res) => {
+    try {
+        const { id } = req.params;
+        const product = await Product.findById(id);
+        if (!product) {
+            return res.status(404).json({
+                message: "Product not found",
+            });
+        }
+
+        res
+        .status(200)
+        .json( new ApiResponse(200, { product }, "Product found successfully"));
+    } catch (error) {
+        console.log(error.message);
+        res.status(400).json({
+            message: error.message || "Product not found",
+        });
+    }
+})
+
     // Add product
 const AddProduct = asyncHandler(async (req, res) => {
     const { name, description, price, stock, category, brand, SKU, status, weight, dimensions, imageUrl, tags } = req.body;
@@ -134,4 +156,4 @@ const DeleteProduct = asyncHandler(async (req, res) => {
     }
 })
 
-export { GetProducts, AddProduct, UpdateProduct, DeleteProduct };
+export { GetProducts, GetProduct, AddProduct, UpdateProduct, DeleteProduct };
