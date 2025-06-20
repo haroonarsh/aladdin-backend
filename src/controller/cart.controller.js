@@ -45,7 +45,7 @@ const AddToCart = asyncHandler(async (req, res) => {
 const GetCart = asyncHandler(async (req, res) => {
     const userId = req.user._id;
     try {
-        const cart = await Cart.find({ userId });
+        const cart = await Cart.find({ userId }).populate("productId");
         if (!cart) {
             res.status(400).json({
                 message: "Cart not found",
