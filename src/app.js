@@ -43,6 +43,10 @@ app.use(passport.session());
 import connectDB from './config/db.js';
 connectDB();
 
+// Order routes
+import orderRouter from './routes/order.routes.js';
+app.use('/api/order', orderRouter);
+
 // Cart routes
 import cartRouter from './routes/cart.routes.js';
 app.use('/api/cart', cartRouter);
