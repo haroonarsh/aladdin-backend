@@ -4,6 +4,7 @@ import Product from "../models/product.model.js";
 import ApiResponse from "../utils/ApiResponse.js";
 import asyncHandler from "../utils/asyncHandler.js";
 
+    // Create Order
 const createOrder = asyncHandler(async (req, res) => {
     const { products, shippingAddress, name, email, phone, city, state } = req.body;
     const userId = req.user._id;
@@ -67,6 +68,7 @@ const createOrder = asyncHandler(async (req, res) => {
     }
 });
 
+    // Update Order Status
 const updateOrderStatus = asyncHandler(async (req, res) => {
     const { orderId, paymentStatus, orderStatus } = req.body;
 
@@ -93,4 +95,49 @@ const updateOrderStatus = asyncHandler(async (req, res) => {
     }
 })
 
-export { createOrder, updateOrderStatus };
+    // Fetch Order by ID
+const fetchAllOrders = asyncHandler(async (req, res) => {
+    const userId = req.user._id;
+
+    try {
+        const orders = await Order.find({ userId })
+            .populate("products.productId", "name price")
+            .populate("userId", "name email phone city state")
+            .sort({ createdAt: -1 });
+        res
+        .status(200)
+        .json(new ApiResponse(200, { orders }, "Orders fetched successfully"));
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).json({
+            message: error.message || "Failed to fetch orders",
+        });
+    }
+})
+
+    // Fetch Ordered Products
+const fetchOrderedProducts = asyncHandler(async (req, res) => {
+    const userId = req.user._id;
+    try {
+        const orders = await Order.find({ userId })
+            .populate("products.productId", "name price")
+            .sort({ createdAt: -1 });
+
+        const products = orders.flatMap(order => order.products.map(product => ({
+            ...product.productId.toObject(),
+            quantity: product.quantity,
+            orderId: order._id
+        })));
+
+        res
+        .status(200)
+        .json(new ApiResponse(200, { products }, "Ordered products fetched successfully"));
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).json({
+            message: error.message || "Failed to fetch ordered products",
+        });
+    }
+})
+
+export { createOrder, updateOrderStatus, fetchAllOrders, fetchOrderedProducts };
