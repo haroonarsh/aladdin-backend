@@ -47,9 +47,31 @@ const GetProduct = asyncHandler(async (req, res) => {
     }
 })
 
+    // Get products by ID
+const GetProductsById = asyncHandler(async (req, res) => {
+    const userId = req.user._id;
+    try {
+        const products = await Product.find({ userId });
+        if (products && products.length === 0) {
+            return res.status(404).json({
+                message: "No products found for this user",
+            });
+        }
+        res
+        .status(200)
+        .json( new ApiResponse(200, { products }, "Products found successfully"));
+    } catch (error) {
+        console.log(error.message);
+        res.status(400).json({
+            message: error.message || "Products not found",
+        });
+    }
+})
+
     // Add product
 const AddProduct = asyncHandler(async (req, res) => {
     const { name, description, price, stock, category, brand, SKU, status, weight, dimensions, imageUrl, tags } = req.body;
+    const userId = req.user._id;
     try {
         // let imageUrl = "";
         if (req.file) {
@@ -60,6 +82,7 @@ const AddProduct = asyncHandler(async (req, res) => {
             fs.unlinkSync(req.file.path); // Clean up the temporary file
         }
         const product = new Product({
+            userId,
             name,
             description,
             price,
@@ -156,4 +179,4 @@ const DeleteProduct = asyncHandler(async (req, res) => {
     }
 })
 
-export { GetProducts, GetProduct, AddProduct, UpdateProduct, DeleteProduct };
+export { GetProducts, GetProductsById, GetProduct, AddProduct, UpdateProduct, DeleteProduct };
