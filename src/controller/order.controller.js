@@ -28,6 +28,8 @@ const createOrder = asyncHandler(async (req, res) => {
                 return res.status(400).json({ message: `Insufficient stock for product ${product.name}` });
             }
             totalAmount += product.price * item.quantity;
+            product.stock -= item.quantity; // Deduct stock
+            await product.save(); // Save updated product stock
         }
 
         const amountInCents = Math.round(totalAmount * 100);
@@ -119,25 +121,73 @@ const fetchAllOrders = asyncHandler(async (req, res) => {
 const fetchOrderedProducts = asyncHandler(async (req, res) => {
     const userId = req.user._id;
     try {
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
+        const skip = (page - 1) * limit;
+
         const orders = await Order.find({ userId })
             .populate("products.productId", "name price")
-            .sort({ createdAt: -1 });
+            .sort({ createdAt: -1 })
+            .skip(skip)
+            .limit(limit);
 
-        const products = orders.flatMap(order => order.products.map(product => ({
-            ...product.productId.toObject(),
-            quantity: product.quantity,
-            orderId: order._id
-        })));
+        const products = orders.flatMap(order =>
+            order.products
+                .filter(product => product.productId) // Ensure productId exists
+                .map(product => ({
+                    ...product.productId.toObject(),
+                    quantity: product.quantity,
+                    orderId: order._id
+                }))
+        );
 
         res
         .status(200)
         .json(new ApiResponse(200, { products }, "Ordered products fetched successfully"));
     } catch (error) {
+        console.error("Error fetching ordered products:", error);
+        res.status(500).json(new ApiResponse(500, null, "Failed to fetch ordered products: " + error.message));
+    }
+})
+
+    // fetch all orders for admin
+const fetchAdminOrders = asyncHandler(async (req, res) => {
+    const adminId = req.user._id;
+    try {
+        const orders = await Order.find({})
+            .populate({
+                path: "products.productId",
+                match: { userId: adminId },
+                select: "name email phone city state"
+            });
+        
+        const filteredOrders = orders
+            .map(order => {
+                const adminProducts = order.products.filter(product => product.productId);
+                if (adminProducts.length > 0) {
+                    return {
+                        ...order.toObject(),
+                        products: adminProducts.map(product => ({
+                            productId: product.productId._id,
+                            name: product.productId.name,
+                            price: product.productId.price,
+                            quantity: product.quantity,
+                        }))
+                    };
+                }
+                return null;
+            })
+            .filter(order => order); // Filter out null values
+            
+        res
+        .status(200)
+        .json(new ApiResponse(200, { orders: filteredOrders }, "Orders fetched successfully"));
+    } catch (error) {
         console.error(error.message);
         res.status(500).json({
-            message: error.message || "Failed to fetch ordered products",
+            message: error.message || "Failed to fetch orders",
         });
     }
 })
 
-export { createOrder, updateOrderStatus, fetchAllOrders, fetchOrderedProducts };
+export { createOrder, updateOrderStatus, fetchAllOrders, fetchOrderedProducts, fetchAdminOrders };
