@@ -73,6 +73,11 @@ const AddProduct = asyncHandler(async (req, res) => {
     const { name, description, price, stock, category, brand, SKU, status, weight, dimensions, imageUrl, tags } = req.body;
     const userId = req.user._id;
     try {
+        if (!name || !price || !stock || !category) {
+            return res.status(400).json({
+                message: "Name, price, stock, and category are required",
+            });
+        }
         // let imageUrl = "";
         if (req.file) {
             const result = await cloudinary.uploader.upload(req.file.path, {
